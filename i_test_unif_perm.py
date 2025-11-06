@@ -129,7 +129,7 @@ def search_ith_perm(imax, *args, h=0.05):
                 P_ai_gt_T = binom.cdf(i - 1, N, P_a_lt_T)
                 accum = accum + P_ai_gt_T
                 accum_list[k, j] = P_ai_gt_T
-        im = plt.imshow(accum_list,origin='lower', extent=[0.0,1.0,0.0,1.0])
+        im = plt.imshow(accum_list, origin='lower', extent=[r0,1.0,p_chance,1.0])
         im.set_clim(0,1.0)
         plt.xlabel('p_correct')
         plt.ylabel('prevelance threshold r0')
@@ -180,7 +180,7 @@ def search_ith_binom(imax, *args, h=0.05):
                 P_ai_gt_T = binom.cdf(i - 1, N, P_a_lt_T)
                 accum = accum + P_ai_gt_T
                 accum_list[k, j] = P_ai_gt_T
-        im=plt.imshow(accum_list,origin='lower')
+        im=plt.imshow(accum_list,origin='lower',extent=[r0,1.0,p_chance,1.0])
         im.set_clim(0,1.0)
         plt.xlabel('p_correct')
         plt.ylabel('prevelance threshold r0')
@@ -289,7 +289,7 @@ if __name__ == "__main__":
     # 1. set critical value and prevalence thredhold
     N = 50
     alpha = 0.05
-    r = 0.7
+    r = 0.8
     r0 = 0.5  # theshold
     seed = 3284
     n_perm = 1000
@@ -299,16 +299,16 @@ if __name__ == "__main__":
 
     ## Simulate data
     acc = simulate_acc(N, seed)
-    # plt.hist(acc, bins=10, density=True)
-    # plt.title(f"True accuracy of all {N} subjects")
-    # plt.show()
-    # plt.close()
+    plt.hist(acc, bins=10, density=True)
+    plt.title(f"True accuracy of all {N} subjects")
+    plt.show()
+    plt.close()
 
     perm_acc = simulate_D_acc_null(N, n_perm=n_perm)
-    # plt.hist(perm_acc[3], bins=10, density=True)
-    # plt.title("permutation accuracy from one subject")
-    # plt.show()
-    # plt.close()
+    plt.hist(perm_acc[3], bins=10, density=True)
+    plt.title("permutation accuracy from one subject")
+    plt.show()
+    plt.close()
 
     # 2. Find imax
     imax = find_ith_binom(N, alpha, r0)
@@ -321,10 +321,10 @@ if __name__ == "__main__":
     ## 3. Search for ith order
     ## manually set imax
     imax = 6
-    ith = search_ith_binom(imax, alpha, r0, p_chance, N, N_trial)
-    #ith = search_ith_perm(imax, alpha, r0, p_chance, N, N_trial, perm_acc)
+    #ith = search_ith_binom(imax, alpha, r0, p_chance, N, N_trial)
+    ith = search_ith_perm(imax, alpha, r0, p_chance, N, N_trial, perm_acc)
     breakpoint()
 
     ## 4. Perform 2nd level test
-    # i_test_perm(ith, alpha, r0, p_chance, N_trial, N, perm_acc, acc)
-    exhaust_imax(imax, alpha, r0, p_chance, N_trial, N, perm_acc)
+    i_test_perm(ith, alpha, r0, p_chance, N_trial, N, perm_acc, acc)
+    # exhaust_imax(imax, alpha, r0, p_chance, N_trial, N, perm_acc)
